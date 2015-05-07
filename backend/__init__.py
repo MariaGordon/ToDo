@@ -1,22 +1,61 @@
-# This file provided by Facebook is for non-commercial testing and evaluation purposes only.
-# Facebook reserves all rights not expressly granted.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# FACEBOOK BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 import json
 import os
-from flask import Flask, Response, request
+from flask import Flask, Response, request, jsonify, abort, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__, static_url_path='', static_folder='../frontend')
 app.add_url_rule('/', 'root', lambda: app.send_static_file('index.html'))
-#app.config.from_object('config')
-#db = SQLAlchemy(app)
+app.config.from_object('config')
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'todo.db')
+db = SQLAlchemy(app)
+
+from backend import models
+
+@app.route('/todo/api/v1.0/tasks', methods=['GET'])
+def get_tasks():
+    tasks = models.Task.query.all()
+    tasklist = []
+    for task in tasks:
+        tasklist.append(task.json())
+    
+    return  jsonify({'tasks': tasklist}), 201 
+
+@app.route('/todo/api/v1.0/tasks', methods=['POST'])
+def create_task():
+    if not request.json or not 'description' in request.json:
+        abort(400)    
+    task = models.Task(description=request.json['description'], done=False)
+    db.session.add(task)
+    db.session.commit()
+    return jsonify({'task':task.json()}), 201
+    
+@app.route('/todo/api/v1.0/tasks/<int:task_id>', methods=['PUT'])
+def update_task(task_id):
+    if not request.json:
+        abort(400)    
+    if not 'done' in request.json:
+        abort(400)
+    
+    task = models.Task.query.get(task_id)
+    task.done = request.json['done']
+    db.session.commit()
+    return jsonify({'task':task.json()}), 201
+
+@app.route('/todo/api/v1.0/tasks', methods=['PUT'])
+def update_all_tasks():
+    if not request.json:
+        abort(400)    
+    if not 'done' in request.json:
+        abort(400)
+    
+    tasks = models.Task.query.all()    
+    for task in tasks:
+        task.done = request.json['done']        
+        
+    db.session.commit()
+    return 201
 
 @app.route('/comments.json', methods=['GET', 'POST'])
 def comments_handler():
