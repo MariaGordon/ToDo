@@ -15,12 +15,13 @@ from backend import models
 
 @app.route('/todo/api/v1.0/tasks', methods=['GET'])
 def get_tasks():
-    tasks = models.Task.query.all()
-    tasklist = []
+    print ("fetching tasks")
+    tasks = models.Task.query.all()    
+    task_list = []
     for task in tasks:
-        tasklist.append(task.json())
-    
-    return  jsonify({'tasks': tasklist}), 201 
+        task_list.append(task.json()[0])
+                   
+    return  jsonify({'task': task_list}), 200 
 
 @app.route('/todo/api/v1.0/tasks', methods=['POST'])
 def create_task():

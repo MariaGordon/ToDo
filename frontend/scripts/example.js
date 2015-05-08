@@ -10,13 +10,13 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-var Comment = React.createClass({
+var Task = React.createClass({
   render: function() {
     var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
     return (
-      <div className="comment">
-        <h2 className="commentAuthor">
-          {this.props.author}
+      <div className="task">
+        <h2 className="state">
+          {this.props.done}
         </h2>
         <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
       </div>
@@ -59,38 +59,42 @@ var CommentBox = React.createClass({
     });
   },
   getInitialState: function() {
-    return {data: []};
+    return {data: {"task" : []}};
   },
   componentDidMount: function() {
     this.loadCommentsFromServer();
     setInterval(this.loadCommentsFromServer, this.props.pollInterval);
   },
   render: function() {
+		console.log("yeah")
+		console.log(this.state.data)
     return (
       <div className="commentBox">
-        <h1>Comments</h1>
-        <CommentList data={this.state.data} />
+        <h1>Todos</h1>
+        <TaskList data={this.state.data} />
         <CommentForm onCommentSubmit={this.handleCommentSubmit} />
       </div>
     );
   }
 });
 
-var CommentList = React.createClass({
-  render: function() {
-    var commentNodes = this.props.data.map(function(comment, index) {
+var TaskList = React.createClass({
+  render: function() {  	  		
+    var taskNodes = this.props.data["task"].map(function(task, index) {
       return (
         // `key` is a React-specific concept and is not mandatory for the
         // purpose of this tutorial. if you're curious, see more here:
         // http://facebook.github.io/react/docs/multiple-components.html#dynamic-children
-        <Comment author={comment.author} key={index}>
-          {comment.text}
-        </Comment>
+        <Task done={task.done} key={index}>
+          {task.description}
+        </Task>
       );
+      
+      console.log(commentNodes)
     });
     return (
-      <div className="commentList">
-        {commentNodes}
+      <div className="taskList">
+        {taskNodes}
       </div>
     );
   }
@@ -120,6 +124,6 @@ var CommentForm = React.createClass({
 });
 
 React.render(
-  <CommentBox url="comments.json" pollInterval={2000} />,
+  <CommentBox url="todo/api/v1.0/tasks" pollInterval={2000} />,
   document.getElementById('content')
 );
