@@ -25,8 +25,8 @@ var Task = React.createClass({
   }
 });
 
-var CommentBox = React.createClass({
-  loadCommentsFromServer: function() {
+var TaskBox = React.createClass({
+  loadTasksFromServer: function() {
     $.ajax({
       url: this.props.url,
       dataType: 'json',
@@ -54,7 +54,7 @@ var CommentBox = React.createClass({
         type: 'POST',
         data: JSON.stringify(newTask),
         success: function(data) {
-          this.setState({data: data});
+          this.setState({data: tasks});
         }.bind(this),
         error: function(xhr, status, err) {
           console.error(this.props.url, status, err.toString());
@@ -66,14 +66,14 @@ var CommentBox = React.createClass({
     return {data: {"task" : []}};
   },
   componentDidMount: function() {
-    this.loadCommentsFromServer();
-    setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+    this.loadTasksFromServer();
+    setInterval(this.loadTasksFromServer, this.props.pollInterval);
   },
   render: function() {
 		console.log("yeah")
 		console.log(this.state.data)
     return (
-      <div className="commentBox">
+      <div className="taskBox">
         <h1>Todos</h1>
         <TaskList data={this.state.data} />
         <TaskForm onNewTaskSubmit={this.handleNewTaskSubmit} />
@@ -123,6 +123,6 @@ var TaskForm = React.createClass({
 });
 
 React.render(
-  <CommentBox url="todo/api/v1.0/tasks" pollInterval={2000} />,
+  <TaskBox url="todo/api/v1.0/tasks" pollInterval={2000} />,
   document.getElementById('content')
 );
