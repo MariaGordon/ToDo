@@ -13,14 +13,14 @@
 // TODO: Add checkbox and a handleOnSubmit
 var Task = React.createClass({
   render: function() {
-    var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
+    
     return (
       <div className="task">
-        <h2 className="state">
-          {this.props.done}
-        </h2>
-        <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+      <input type="checkbox"> {this.props.description}</input>
+        
+        
       </div>
+        
     );
   }
 });
@@ -89,7 +89,7 @@ var TaskList = React.createClass({
         // `key` is a React-specific concept and is not mandatory for the
         // purpose of this tutorial. if you're curious, see more here:
         // http://facebook.github.io/react/docs/multiple-components.html#dynamic-children
-        <Task done={task.done} key={index}>
+        <Task done={task.done} description={task.description} key={index}>
           {task.description}
         </Task>
       );      
