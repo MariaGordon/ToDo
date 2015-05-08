@@ -10,6 +10,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+// TODO: Add checkbox and a handleOnSubmit
 var Task = React.createClass({
   render: function() {
     var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
@@ -37,18 +38,21 @@ var CommentBox = React.createClass({
       }.bind(this)
     });
   },
-  handleCommentSubmit: function(comment) {
-    var comments = this.state.data;
-    comments.push(comment);
-    this.setState({data: comments}, function() {
+  handleNewTaskSubmit: function(newTask) {
+    var tasks = this.state.data;
+    console.log(newTask)
+    tasks["task"].push(newTask);
+    console.log(tasks["task"])
+    this.setState({data: tasks}, function() {
       // `setState` accepts a callback. To avoid (improbable) race condition,
       // `we'll send the ajax request right after we optimistically set the new
       // `state.
       $.ajax({
         url: this.props.url,
         dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
         type: 'POST',
-        data: comment,
+        data: JSON.stringify(newTask),
         success: function(data) {
           this.setState({data: data});
         }.bind(this),
@@ -72,7 +76,7 @@ var CommentBox = React.createClass({
       <div className="commentBox">
         <h1>Todos</h1>
         <TaskList data={this.state.data} />
-        <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+        <TaskForm onNewTaskSubmit={this.handleNewTaskSubmit} />
       </div>
     );
   }
@@ -88,9 +92,7 @@ var TaskList = React.createClass({
         <Task done={task.done} key={index}>
           {task.description}
         </Task>
-      );
-      
-      console.log(commentNodes)
+      );      
     });
     return (
       <div className="taskList">
@@ -100,24 +102,21 @@ var TaskList = React.createClass({
   }
 });
 
-var CommentForm = React.createClass({
+var TaskForm = React.createClass({
   handleSubmit: function(e) {
     e.preventDefault();
-    var author = React.findDOMNode(this.refs.author).value.trim();
-    var text = React.findDOMNode(this.refs.text).value.trim();
-    if (!text || !author) {
+    var description = React.findDOMNode(this.refs.description).value.trim();
+    if (!description) {
       return;
     }
-    this.props.onCommentSubmit({author: author, text: text});
-    React.findDOMNode(this.refs.author).value = '';
-    React.findDOMNode(this.refs.text).value = '';
+    this.props.onNewTaskSubmit({description: description});
+    React.findDOMNode(this.refs.description).value = '';    
   },
   render: function() {
     return (
-      <form className="commentForm" onSubmit={this.handleSubmit}>
-        <input type="text" placeholder="Your name" ref="author" />
-        <input type="text" placeholder="Say something..." ref="text" />
-        <input type="submit" value="Post" />
+      <form className="taskForm" onSubmit={this.handleSubmit}>
+        <input type="text" placeholder="What needs to be done?" ref="description" />        
+        <input type="submit" value="Add Todo" />
       </form>
     );
   }

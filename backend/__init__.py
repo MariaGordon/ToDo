@@ -14,8 +14,7 @@ db = SQLAlchemy(app)
 from backend import models
 
 @app.route('/todo/api/v1.0/tasks', methods=['GET'])
-def get_tasks():
-    print ("fetching tasks")
+def get_tasks():    
     tasks = models.Task.query.all()    
     task_list = []
     for task in tasks:
@@ -24,9 +23,10 @@ def get_tasks():
     return  jsonify({'task': task_list}), 200 
 
 @app.route('/todo/api/v1.0/tasks', methods=['POST'])
-def create_task():
+def create_task():    
     if not request.json or not 'description' in request.json:
         abort(400)    
+    
     task = models.Task(description=request.json['description'], done=False)
     db.session.add(task)
     db.session.commit()
