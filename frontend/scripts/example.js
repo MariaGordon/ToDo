@@ -1,8 +1,6 @@
 var Task = React.createClass({
 	handleChange: function() {
     	this.props.value["done"] = (this.props.value["done"] === 0) ? 1 : 0; 
-    	console.log(this.props.id)
-    	console.log(this.props.value["done"])
     	this.props.onUpdateTask(this.props.id, this.props.value["done"])
     },    
     render: function() {    
@@ -27,11 +25,9 @@ var TaskBox = React.createClass({
       }.bind(this)
     });
   },
-  handleNewTaskSubmit: function(newTask) {
+  handleNewTaskSubmit: function(description) {
     var tasks = this.state.data;
-    console.log(newTask)
-    tasks["task"].push(newTask);
-    console.log(tasks["task"])
+    tasks["temporary"] = {"description" : description, "done" : false};    
     this.setState({data: tasks}, function() {
       // `setState` accepts a callback. To avoid (improbable) race condition,
       // `we'll send the ajax request right after we optimistically set the
@@ -42,7 +38,7 @@ var TaskBox = React.createClass({
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
         type: 'POST',
-        data: JSON.stringify(newTask),
+        data: JSON.stringify({"description": description}),
         success: function(data) {
           this.setState({data: tasks});
         }.bind(this),
@@ -54,11 +50,7 @@ var TaskBox = React.createClass({
   },
   handleUpdateTask: function(id, done) {
 	  var tasks = this.state.data;
-	  console.log(id)
-	  console.log(tasks)
 	  tasks[id]["done"] = done;
-	  console.log(done)
-	  console.log(JSON.stringify({'done': done}))
 	  this.setState({data:tasks}, function() {
 		  $.ajax({
 			  url: this.props.url+"/"+id,
@@ -74,8 +66,6 @@ var TaskBox = React.createClass({
 			  }.bind(this)
 		  });			
 	  	});
-	
-	console.log("Add code to handle update task")  
   },
   getInitialState: function() {
     return {data: {}};
@@ -97,9 +87,7 @@ var TaskBox = React.createClass({
 
 var TaskList = React.createClass({
 	handleUpdate: function(id, done) {
-		console.log(id)
-		console.log(done)
-        this.props.onTaskUpdate(id, done);
+		this.props.onTaskUpdate(id, done);
     },
   render: function() {  	  			
 	var taskNodes = []
@@ -121,7 +109,7 @@ var TaskForm = React.createClass({
     if (!description) {
       return;
     }
-    this.props.onNewTaskSubmit({description: description});
+    this.props.onNewTaskSubmit(description);
     React.findDOMNode(this.refs.description).value = '';    
   },
   render: function() {
