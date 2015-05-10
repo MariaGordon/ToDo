@@ -6,7 +6,7 @@ class Task(db.Model):
     done = db.Column(db.Boolean, index=True)
     
     def json(self):
-        return [{'id': self.id,
+        return {self.id: {
                 'description': self.description,
-                'done': self.done}]
+                'done': self.done}}
     

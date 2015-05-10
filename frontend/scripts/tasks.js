@@ -1,14 +1,15 @@
+
+// TODO: Add checkbox and a handleOnSubmit
 var Task = React.createClass({
-	handleChange: function() {
-    	this.props.value["done"] = (this.props.value["done"] === 0) ? 1 : 0; 
-    	console.log(this.props.id)
-    	console.log(this.props.value["done"])
-    	this.props.onUpdateTask(this.props.id, this.props.value["done"])
-    },    
-    render: function() {    
+	onChange: function() {
+    	this.props.done = (this.props.done === 0) ? 1 : 0;
+    	this.props.onUpdateTask(this.props.description, this.props.done)
+    },
+    render: function() {
+    
     return (
       <form className="task">
-      	<input type="checkbox" checked={this.props.value["done"]} onChange={this.handleChange}> {this.props.value["description"]}</input>               
+      	<input type="checkbox" checked={this.props.done} onChange={this.onChange}> {this.props.description}</input>               
       </form>        
     );
   }
@@ -34,8 +35,7 @@ var TaskBox = React.createClass({
     console.log(tasks["task"])
     this.setState({data: tasks}, function() {
       // `setState` accepts a callback. To avoid (improbable) race condition,
-      // `we'll send the ajax request right after we optimistically set the
-		// new
+      // `we'll send the ajax request right after we optimistically set the new
       // `state.
       $.ajax({
         url: this.props.url,
@@ -51,44 +51,45 @@ var TaskBox = React.createClass({
         }.bind(this)
       });
     });
-  },
-  handleUpdateTask: function(id, done) {
-	  var tasks = this.state.data;
-	  console.log(id)
-	  console.log(tasks)
-	  tasks[id]["done"] = done;
-	  console.log(done)
-	  console.log(JSON.stringify({'done': done}))
-	  this.setState({data:tasks}, function() {
-		  $.ajax({
-			  url: this.props.url+"/"+id,
-			  dataType: 'json',
-			  contentType: 'application/json; charset=utf-8',
-			  type: 'PUT',
-			  data: JSON.stringify({'done': done}),
-			  success: function(data) {
-				  this.setState({data: tasks});
-			  }.bind(this),
-			  error: function(xhr, status, err) {
-				  console.error(this.props.url, status, err.toString());
-			  }.bind(this)
-		  });			
-	  	});
-	
-	console.log("Add code to handle update task")  
+    handleUpdateTask: function(description, done) {
+        var tasks = this.state.data;
+        console.log(newTask)
+        tasks["task"].push(newTask);
+        console.log(tasks["task"])
+        this.setState({data: tasks}, function() {
+          // `setState` accepts a callback. To avoid (improbable) race condition,
+          // `we'll send the ajax request right after we optimistically set the new
+          // `state.
+          $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            type: 'PUT',
+            data: JSON.stringify(newTask),
+            success: function(data) {
+              this.setState({data: tasks});
+            }.bind(this),
+            error: function(xhr, status, err) {
+              console.error(this.props.url, status, err.toString());
+            }.bind(this)
+          });
+        });
+
   },
   getInitialState: function() {
-    return {data: {}};
+    return {data: {"task" : []}};
   },
   componentDidMount: function() {
     this.loadTasksFromServer();
     setInterval(this.loadTasksFromServer, this.props.pollInterval);
   },
   render: function() {
+		console.log("yeah")
+		console.log(this.state.data)
     return (
       <div className="taskBox">
         <h1>Todos</h1>
-        <TaskList data={this.state.data} onTaskUpdate={this.handleUpdateTask} />
+        <TaskList data={this.state.data} onUpdateTask={this.handleUpdateTask}/>
         <TaskForm onNewTaskSubmit={this.handleNewTaskSubmit} />
       </div>
     );
@@ -96,16 +97,17 @@ var TaskBox = React.createClass({
 });
 
 var TaskList = React.createClass({
-	handleUpdate: function(id, done) {
-		console.log(id)
-		console.log(done)
-        this.props.onTaskUpdate(id, done);
-    },
-  render: function() {  	  			
-	var taskNodes = []
-	for (task in this.props.data) {			
-		taskNodes.push(<Task id={task} value={this.props.data[task]} onUpdateTask={this.handleUpdate}/>); 
-	};
+  render: function() {  	  		
+    var taskNodes = this.props.data["task"].map(function(task, index) {
+      return (
+        // `key` is a React-specific concept and is not mandatory for the
+        // purpose of this tutorial. if you're curious, see more here:
+        // http://facebook.github.io/react/docs/multiple-components.html#dynamic-children
+        <Task done={task.done} description={task.description} key={index} onUpdateTask={this.onUpdateTask}>
+          {task.description}
+        </Task>
+      );      
+    });
     return (
       <div className="taskList">
         {taskNodes}
