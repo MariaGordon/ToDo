@@ -29,33 +29,16 @@ def create_task():
     task = models.Task(description=request.json['description'], done=False)
     db.session.add(task)
     db.session.commit()
-    return jsonify({'task':task.json()}), 201
+    return 201
     
 @app.route('/todo/api/v1.0/tasks/<int:task_id>', methods=['PUT'])
-def update_task(task_id):  
-    print(task_id)  
+def update_task(task_id):      
     if not request.json:
-        print("not json")
         abort(400)    
     if not 'done' in request.json:
-        print("missing done")
         abort(400)
     
     task = models.Task.query.get(task_id)
     task.done = request.json['done']
-    db.session.commit()
-    return jsonify({'task':task.json()}), 201
-
-@app.route('/todo/api/v1.0/tasks', methods=['PUT'])
-def update_all_tasks():
-    if not request.json:
-        abort(400)    
-    if not 'done' in request.json:
-        abort(400)
-    
-    tasks = models.Task.query.all()    
-    for task in tasks:
-        task.done = request.json['done']        
-        
     db.session.commit()
     return 201

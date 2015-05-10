@@ -6,6 +6,9 @@ class Task(db.Model):
     done = db.Column(db.Boolean, index=True)
     
     def json(self):
+        '''
+        JSON representation of Task
+        '''
         return {self.id: {
                 'description': self.description,
                 'done': self.done}}
