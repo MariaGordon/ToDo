@@ -1,62 +1,153 @@
+
 body {
-  background: #fff;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: rgb(246, 245, 245);
+    font-family: "lucida grande", "sans-serif";
+}
+
+form {
+    margin: 0;
+    padding: 0;
+}
+
+.completed label{
+    text-decoration: line-through;
+    color: rgb(203, 203, 203);
+}
+
+.app {
+    margin: 0 auto;
+    width: 500px;
+}
+
+.taskBox {
+    margin-top:50px;
+}
+
+.taskBox .title {
+    padding: 25px 0px 25px 0px;
+    border-width: 0 0 1px 0;
+    border-style: dashed;
+    border-color: rgb(228, 228, 228);
+}
+
+.taskBox .taskForm {
+    padding: 10px 30px 0px 5px;
+}
+
+.taskBox .taskBoxBar {
+    color: rgb(203, 203, 203);
+    padding: 20px;
+
+    border-width: 1px 0 0 0;
+    border-style: dashed;
+    border-color: rgb(228, 228, 228);
+}
+
+.taskBox input {
+  height: 40px;
+  box-sizing: border-box;
+  font-size: 14px;
+  border-radius: 5px;
+  border: solid 1px #b9b8b8;
+}
+
+.taskBox input[type=text] {
+  padding: 15px;
+  width: 66%;
+  margin-right: 3%;
+  box-shadow: inset 0px 3px 12px -2px rgba(0,0,0,0.1);
+}
+
+.taskBox input[type=submit] {
+  width: 30%;
+  font-weight: bold;
+  background: rgba(232,232,232,1);
+  background: linear-gradient(to bottom, rgba(232,232,232,1) 0%, rgba(232,232,232,1) 46%, rgba(215,215,215,1) 54%, rgba(215,215,215,1) 100%);
+}
+
+.taskBox aside {
+    float: right;
+}
+
+.taskList li {
+    color: rgb(122, 123, 124);
+    border-width: 0;
+}
+.taskList li:hover .ui-icon {
+    visibility: visible;
+}
+
+.taskList .ui-icon {
+    float: right;
+    visibility: hidden;
+}
+
+.taskList .taskLabel {
+    border-width: 0;
+    padding-left: 7px;
+    font-weight: 500;
+}
+
+.taskList li:nth-child(odd) {
+    background-color: rgb(244, 247, 250);
+}
+
+li.placeholder {background: rgb(255,240,120);}
+li.placeholder:before {
+  content: "Drop here";
+  color: rgb(225,210,90);
+}
+
+body {
+  margin: 40px;
+  width: 620px;
+  font-family: arial;
   font-size: 15px;
-  line-height: 1.7;
-  margin: 0;
-  padding: 30px;
 }
-
-a {
-  color: #4183c4;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-code {
-  background-color: #f8f8f8;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  font-family: "Bitstream Vera Sans Mono", Consolas, Courier, monospace;
-  font-size: 12px;
-  margin: 0 2px;
-  padding: 0px 5px;
-}
-
-h1, h2, h3, h4 {
-  font-weight: bold;
-  margin: 0 0 15px;
-  padding: 0;
-}
-
-h1 {
-  border-bottom: 1px solid #ddd;
-  font-size: 2.5em;
-  font-weight: bold;
-  margin: 0 0 15px;
-  padding: 0;
-}
-
-h2 {
-  border-bottom: 1px solid #eee;
-  font-size: 2em;
-}
-
-h3 {
-  font-size: 1.5em;
-}
-
-h4 {
-  font-size: 1.2em;
-}
-
-p, ul {
-  margin: 15px 0;
-}
-
 ul {
-  padding-left: 30px;
+  list-style: none;
+  margin:0;
+  padding:0;
+  float:left;
+  width:200px;
+  background:#ddd;
 }
+li {
+  padding: 10px;
+  color: #666;
+  line-height: 17px;
+}
+li.dragging {
+  background: #eee;
+}
+#app > ul {
+  float: left;
+}
+#grid div {
+  height: 111px;
+  width: 130px;
+  float: left;
+  color: #fff;
+  position: relative;
+}
+#grid div span {
+  font-size: 10px;
+  position: absolute;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  text-shadow: 0px 0px 2px rgba(0,0,0,0.5);
+}
+#grid div.dragging {
+  -webkit-transform: scale(1.2);
+  -moz-transform: scale(1.2);
+  transform: scale(1.2);
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
+  z-index: 1;
+}
+
+
+
+

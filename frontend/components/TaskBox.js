@@ -10,36 +10,6 @@
  * Inspired by the Facebook React tutorial building comments box.
  */
 
-var Task = React.createClass({
-	handleChange: function() {
-    	this.props.value["done"] = (this.props.value["done"] === 0) ? 1 : 0; 
-    	this.props.onUpdateTask(this.props.id, this.props.value["done"])
-    },    
-    render: function() {    
-    return (
-      <form className="task">
-      	<input type="checkbox" checked={this.props.value["done"]} onChange={this.handleChange}> {this.props.value["description"]}</input>               
-      </form>        
-    );
-  }
-});
-
-var TaskList = React.createClass({
-	handleUpdate: function(id, done) {
-		this.props.onTaskUpdate(id, done);
-    },
-  render: function() {  	  			
-	var taskNodes = []
-	for (task in this.props.data) {			
-		taskNodes.push(<Task id={task} value={this.props.data[task]} onUpdateTask={this.handleUpdate}/>); 
-	};
-    return (
-      <div className="taskList">
-        {taskNodes}
-      </div>
-    );
-  }
-});
 
 var TaskBox = React.createClass({
   loadTasksFromServer: function() {
@@ -49,20 +19,21 @@ var TaskBox = React.createClass({
       success: function(data) {
         this.setState({data: data});
       }.bind(this),
-      error: function(xhr, status, err) {
+      error: function(xhr, status, err) {    	
         console.error(this.props.url, status, err.toString());
       }.bind(this)
     });
   },
   handleNewTaskSubmit: function(description) {
     var tasks = this.state.data;
+    console.log(description)
     tasks["temporary"] = {"description" : description, "done" : false};    
     this.setState({data: tasks}, function() {
       $.ajax({
-        url: this.props.url,
+        url: this.props.url+"/create",
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
-        type: 'POST',
+        type: 'PUT',
         data: JSON.stringify({"description": description}),
         success: function(data) {
           this.setState({data: tasks});
@@ -92,6 +63,14 @@ var TaskBox = React.createClass({
 		  });			
 	  	});
   },
+  handleMove: function(idMoved, fromId, toId) {
+	  console.log("Move item:");
+	  console.log(idMoved);
+	  console.log("From after element:");
+	  console.log(fromId);
+	  console.log("To after element:");
+	  console.log(toId);	  
+  },
   getInitialState: function() {
     return {data: {}};
   },
@@ -101,34 +80,24 @@ var TaskBox = React.createClass({
   },
   render: function() {
     return (
-      <div className="taskBox">
-        <h1>Todos</h1>
-        <TaskForm onNewTaskSubmit={this.handleNewTaskSubmit} />
-        <TaskList data={this.state.data} onTaskUpdate={this.handleUpdateTask} />        
+    		
+	<div className="taskBox panel panel-default">
+      <div className="title text-center">
+         <h3><strong>Todos</strong></h3>
       </div>
+
+      <div className="taskForm">
+         <TaskForm onNewTaskSubmit={this.handleNewTaskSubmit}/>
+     </div>
+	 <div className="taskList">	 
+        <TaskList data={this.state.data} onTaskUpdate={this.handleUpdateTask} onMove={this.handleMove}/>        
+      </div>
+        </div>
     );
   }
 });
 
-var TaskForm = React.createClass({
-  handleSubmit: function(e) {
-    e.preventDefault();
-    var description = React.findDOMNode(this.refs.description).value.trim();
-    if (!description) {
-      return;
-    }
-    this.props.onNewTaskSubmit(description);
-    React.findDOMNode(this.refs.description).value = '';    
-  },
-  render: function() {
-    return (
-      <form className="taskForm" onSubmit={this.handleSubmit}>
-        <input type="text" placeholder="What needs to be done?" ref="description" />        
-        <input type="submit" value="Add Todo" />
-      </form>
-    );
-  }
-});
+
 
 React.render(
   <TaskBox url="todo/api/v1.0/tasks" pollInterval={2000} />,

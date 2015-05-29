@@ -8,6 +8,7 @@
     
     <!-- Not present in the tutorial. Just for basic styling. -->
     <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.0/react.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.0/JSXTransformer.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -16,7 +17,13 @@
   </head>
       
   <body>
-    <div id="content"></div>
-    <script type="text/jsx;harmony=true" src="scripts/tasks.js"></script>
+  <div class="app">
+  	<div id="content"></div>
+  	<script type="text/jsx;harmony=true" src="components/TaskList.js"></script>
+    <script type="text/jsx;harmony=true" src="components/TaskForm.js"></script>
+    <script type="text/jsx;harmony=true" src="components/Task.js"></script>    
+    <script type="text/jsx;harmony=true" src="components/TaskBox.js"></script>
+    </div>      
   </body>
+  
 </html>

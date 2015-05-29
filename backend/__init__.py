@@ -13,23 +13,33 @@ db = SQLAlchemy(app)
 from backend import models
 
 @app.route('/todo/api/v1.0/tasks', methods=['GET'])
-def get_tasks():    
+def get_tasks():        
     task_list = models.Task.query.all()    
     tasks = {}
     for task in task_list:        
         tasks.update(task.json())        
-                   
+                       
     return  jsonify(tasks), 200 
 
-@app.route('/todo/api/v1.0/tasks', methods=['POST'])
-def create_task():    
+# TODO this should be a PUT request
+@app.route('/todo/api/v1.0/tasks/create', methods=['PUT'])
+def create_task():         
     if not request.json or not 'description' in request.json:
         abort(400)    
     
-    task = models.Task(description=request.json['description'], done=False)
+    lastItem = models.Task.query.filter_by(previous=None).first()
+            
+    task = models.Task(description=request.json['description'], done=False, previous=None)    
     db.session.add(task)
     db.session.commit()
-    return 201
+    
+    # Update the previous item to point to the new task instead
+    if lastItem != None:
+        newItem =  models.Task.query.filter_by(description=request.json['description']).first()
+        lastItem.previous = newItem.id
+        db.session.commit()
+    
+    return "1", 201
     
 @app.route('/todo/api/v1.0/tasks/<int:task_id>', methods=['PUT'])
 def update_task(task_id):      
