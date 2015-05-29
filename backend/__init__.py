@@ -41,7 +41,7 @@ def create_task():
     
     return "1", 201
     
-@app.route('/todo/api/v1.0/tasks/<int:task_id>', methods=['PUT'])
+@app.route('/todo/api/v1.0/tasks/status/<int:task_id>', methods=['PUT'])
 def update_task(task_id):      
     if not request.json:
         abort(400)    
@@ -50,5 +50,26 @@ def update_task(task_id):
     
     task = models.Task.query.get(task_id)
     task.done = request.json['done']
+    db.session.commit()
+    return 201
+
+@app.route('/todo/api/v1.0/tasks/move/<int:task_id>', methods=['PUT'])
+def move_task(task_id):      
+    if not request.json:
+        abort(400)    
+    if not 'after' in request.json:
+        abort(400)
+    
+    # Redirect item that previously linked to the task that is moved
+    taskToMove = models.Task.query.get(task_id)
+    previousLinkedTask = models.Task.query.filter_by(previous=task_id).first()    
+    if previousLinkedTask != None:
+        previousLinkedTask.previous = taskToMove.previous
+
+    # Redirect the item that now will link to the task that is moved    
+    taskToMove.previous = request.json['after']
+    nextLinkedTask = models.Task.query.filter_by(previous=request.json['after']).first()
+    nextLinkedTask.previous = taskToMove.id    
+        
     db.session.commit()
     return 201

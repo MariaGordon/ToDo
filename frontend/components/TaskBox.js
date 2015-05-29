@@ -49,7 +49,7 @@ var TaskBox = React.createClass({
 	  tasks[id]["done"] = done;
 	  this.setState({data:tasks}, function() {
 		  $.ajax({
-			  url: this.props.url+"/"+id,
+			  url: this.props.url+"/status/"+id,
 			  dataType: 'json',
 			  contentType: 'application/json; charset=utf-8',
 			  type: 'PUT',
@@ -63,11 +63,25 @@ var TaskBox = React.createClass({
 		  });			
 	  	});
   },
-  handleMove: function(idMoved, fromId, toId) {
+  handleMove: function(idMoved, toId) {
+	  // TODO: Temporary client move
+	  console.log("idMoved")
+	  console.log(idMoved)
+	  $.ajax({
+		  url: this.props.url+"/move/"+idMoved,
+		  dataType: 'json',
+		  contentType: 'application/json',
+		  type: 'PUT',
+		  data: JSON.stringify({'after': toId}),
+		  success: function() {
+			  console.log("Success, moved")
+		  },
+		  error: function(xhr, status, err) {
+			  console.error(this.props.url, status, err.toString());
+		  }.bind(this)
+	  });
 	  console.log("Move item:");
 	  console.log(idMoved);
-	  console.log("From after element:");
-	  console.log(fromId);
 	  console.log("To after element:");
 	  console.log(toId);	  
   },

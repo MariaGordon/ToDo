@@ -23,13 +23,12 @@ var TaskList = React.createClass({
         // Tell TaskBox about the move
         var data = this.state.data;        
         var moved = Number(this.dragged.dataset.id);        
-        var to = Number(this.over.dataset.id);
-        var fromId = 1;
+        var to = Number(this.over.dataset.id);        
+        console.log("moved")
+        console.log(moved)
         
         console.log(this.dragged.dataset);
-        this.props.onMove(this.props.data[moved], 
-        			this.props.data[fromId], 
-        			this.props.data[to]);
+        this.props.onMove(moved, to);
       },
       dragOver: function(e) {
         e.preventDefault();
