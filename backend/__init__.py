@@ -11,10 +11,22 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'to
 db = SQLAlchemy(app)
 
 from backend import models
+    
+lastTask = 0
 
 @app.route('/todo/api/v1.0/tasks', methods=['GET'])
 def get_tasks():        
-    task_list = models.Task.query.all()    
+    task_list = models.Task.query.all()
+    print("Before ordering")
+    for task in task_list:
+        print(task.json())
+    if task_list != []:
+        print(task_list[1].json())
+        task_list = models.Task.query.order_by(models.Task.index).all()   
+    
+    print("After ordering")
+    for task in task_list:
+        print(task.json())
     tasks = {}
     for task in task_list:        
         tasks.update(task.json())        
@@ -23,21 +35,14 @@ def get_tasks():
 
 # TODO this should be a PUT request
 @app.route('/todo/api/v1.0/tasks/create', methods=['PUT'])
-def create_task():         
+def create_task():       
+    global lastTask  
     if not request.json or not 'description' in request.json:
         abort(400)    
-    
-    lastItem = models.Task.query.filter_by(previous=None).first()
             
-    task = models.Task(description=request.json['description'], done=False, previous=None)    
+    task = models.Task(description=request.json['description'])    
     db.session.add(task)
     db.session.commit()
-    
-    # Update the previous item to point to the new task instead
-    if lastItem != None:
-        newItem =  models.Task.query.filter_by(description=request.json['description']).first()
-        lastItem.previous = newItem.id
-        db.session.commit()
     
     return "1", 201
     
@@ -51,10 +56,11 @@ def update_task(task_id):
     task = models.Task.query.get(task_id)
     task.done = request.json['done']
     db.session.commit()
-    return 201
+    return "1", 201
 
 @app.route('/todo/api/v1.0/tasks/move/<int:task_id>', methods=['PUT'])
-def move_task(task_id):      
+def move_task(task_id): 
+    global lastTask     
     if not request.json:
         abort(400)    
     if not 'after' in request.json:
@@ -71,5 +77,9 @@ def move_task(task_id):
     nextLinkedTask = models.Task.query.filter_by(previous=request.json['after']).first()
     nextLinkedTask.previous = taskToMove.id    
         
+    # The task moved to the end of the list
+    if taskToMove.previous == lastTask:
+        lastTask = taskToMove.id
+        
     db.session.commit()
-    return 201
+    return "1", 201

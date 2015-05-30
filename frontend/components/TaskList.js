@@ -36,14 +36,11 @@ var TaskList = React.createClass({
         if(e.target.className == "placeholder") return;
         this.over = e.target;        
         e.target.parentNode.insertBefore(placeholder, e.target);
-      },
-    
+      },        
   render: function() {
-
-	var taskNodes = []
-	i = 0
-	for (task in this.props.data) {
-		i = i + 1;
+  
+	var taskNodes = []	
+	for (task in this.props.data) {		
 		taskNodes.push(
 				  <li className="list-group-item"
 				  data-id={task}
