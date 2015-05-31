@@ -15,7 +15,7 @@ var TaskList = React.createClass({
         // for the drag to properly work
         e.dataTransfer.setData("text/html", e.currentTarget);
       },
-      dragEnd: function(e) {
+    dragEnd: function(e) {
 
         this.dragged.style.display = "block";
         this.dragged.parentNode.removeChild(placeholder);
@@ -30,27 +30,23 @@ var TaskList = React.createClass({
         console.log(this.dragged.dataset);
         this.props.onMove(moved, to);
       },
-      dragOver: function(e) {
+    dragOver: function(e) {
         e.preventDefault();
         this.dragged.style.display = "none";
         if(e.target.className == "placeholder") return;
         this.over = e.target;        
         e.target.parentNode.insertBefore(placeholder, e.target);
       },        
-  render: function() {
-  
-	var taskNodes = []	
-	for (task in this.props.data) {		
-		taskNodes.push(
-				  <li className="list-group-item"
-				  data-id={task}
-				  draggable="true"
-				  onDragEnd={this.dragEnd}
-				  onDragStart={this.dragStart}>
-				<Task id={task} value={this.props.data[task]} onUpdateTask={this.handleUpdate}/>
-						</li>); 
-	};
-	
+    render: function() {    
+	var taskNodes = this.props.data.map(function(task){
+		return  (<li className="list-group-item"
+			  		data-id={task}
+					draggable="true"
+					onDragEnd={this.dragEnd}
+		  			onDragStart={this.dragStart}>
+					<Task id={task} value={this.props.data[task]} onUpdateTask={this.handleUpdate}/>
+				</li>);
+	});
     return (
       <ul onDragOver={this.dragOver}>
         {taskNodes}

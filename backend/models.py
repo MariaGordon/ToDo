@@ -5,17 +5,16 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(140))
     done = db.Column(db.Boolean)
-    index = db.Column(db.Integer)    
+    # Singly linked list, pointing to next ID
+    next = db.Column(db.Integer)
+    # First tells the task is the fist in the linked list 
+    first = db.Column(db.Boolean)
     
-    def __init__(self, description):
+    def __init__(self, description, first):
         self.description = description
         self.done = False
-        
-        maxIndex = db.session.query(func.max(Task.index)).scalar()
-        if maxIndex is None:
-            self.index = 0
-        else:
-            self.index = maxIndex + 1         
+        self.next = None       
+        self.first = first
     
     def json(self):
         '''
@@ -23,6 +22,7 @@ class Task(db.Model):
         '''        
         return {self.id: {
                 'description': self.description,
-                'index': self.index,
+                'next': self.next,
+                'first': self.first,
                 'done': self.done}}
     

@@ -16,8 +16,8 @@ var TaskBox = React.createClass({
     $.ajax({
       url: this.props.url,
       dataType: 'json',
-      success: function(data) {
-        this.setState({data: data});
+      success: function(data) {    	
+        this.setState({data: data["result"]});
       }.bind(this),
       error: function(xhr, status, err) {    	
         console.error(this.props.url, status, err.toString());
@@ -86,7 +86,7 @@ var TaskBox = React.createClass({
 	  console.log(toId);	  
   },
   getInitialState: function() {
-    return {data: {}};
+    return {data: []};
   },
   componentDidMount: function() {
     this.loadTasksFromServer();

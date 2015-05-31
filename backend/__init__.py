@@ -12,37 +12,46 @@ db = SQLAlchemy(app)
 
 from backend import models
     
-lastTask = 0
-
 @app.route('/todo/api/v1.0/tasks', methods=['GET'])
 def get_tasks():        
-    task_list = models.Task.query.all()
-    print("Before ordering")
-    for task in task_list:
-        print(task.json())
-    if task_list != []:
-        print(task_list[1].json())
-        task_list = models.Task.query.order_by(models.Task.index).all()   
-    
-    print("After ordering")
-    for task in task_list:
-        print(task.json())
-    tasks = {}
-    for task in task_list:        
-        tasks.update(task.json())        
-                       
-    return  jsonify(tasks), 200 
+    tasksUnsorted = models.Task.query.all()    
+    # Now sort the data
+    # Place the unsorted list in a dictionary
+    tasksDictionary = {}
+    for task in tasksUnsorted:
+        tasksDictionary[task.id] = task
+        
+    tasksSorted = []
+    firstTask = models.Task.query.filter_by(first=True).first()
+    nextTaskID = None
+    if firstTask != None:
+        nextTaskID = firstTask.id
+            
+    while nextTaskID != None:
+        nextTask = tasksDictionary[nextTaskID]
+        tasksSorted.append(nextTask.json())
+        nextTaskID = nextTask.next        
+                    
+    print(tasksSorted)      
+    return  jsonify({"result" : tasksSorted}) 
 
 # TODO this should be a PUT request
 @app.route('/todo/api/v1.0/tasks/create', methods=['PUT'])
-def create_task():       
-    global lastTask  
+def create_task():         
     if not request.json or not 'description' in request.json:
         abort(400)    
-            
-    task = models.Task(description=request.json['description'])    
+    
+    lastTask = models.Task.query.filter_by(next=None).first()            
+    task = models.Task(description=request.json['description'],
+                       first = lastTask==None)    
+        
     db.session.add(task)
     db.session.commit()
+    
+    if lastTask != None:    
+        task = models.Task.query.filter_by(description=request.json['description']).first()
+        lastTask.next = task.id        
+        db.session.commit()
     
     return "1", 201
     
