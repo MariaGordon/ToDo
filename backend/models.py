@@ -20,9 +20,9 @@ class Task(db.Model):
         '''
         JSON representation of Task
         '''        
-        return {self.id: {
+        return {'id': self.id,
                 'description': self.description,
                 'next': self.next,
                 'first': self.first,
-                'done': self.done}}
+                'done': self.done}
     

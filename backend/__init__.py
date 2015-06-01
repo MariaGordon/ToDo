@@ -67,28 +67,26 @@ def update_task(task_id):
     db.session.commit()
     return "1", 201
 
-@app.route('/todo/api/v1.0/tasks/move/<int:task_id>', methods=['PUT'])
-def move_task(task_id): 
-    global lastTask     
-    if not request.json:
-        abort(400)    
-    if not 'after' in request.json:
-        abort(400)
-    
+@app.route('/todo/api/v1.0/tasks/move/<int:move_id>/after/<int:after_id>', methods=['PUT'])
+def move_task(move_id, after_id):            
     # Redirect item that previously linked to the task that is moved
-    taskToMove = models.Task.query.get(task_id)
-    previousLinkedTask = models.Task.query.filter_by(previous=task_id).first()    
-    if previousLinkedTask != None:
-        previousLinkedTask.previous = taskToMove.previous
-
-    # Redirect the item that now will link to the task that is moved    
-    taskToMove.previous = request.json['after']
-    nextLinkedTask = models.Task.query.filter_by(previous=request.json['after']).first()
-    nextLinkedTask.previous = taskToMove.id    
+    task_to_move = models.Task.query.get(move_id)
+    before_task_to_move = models.Task.query.filter_by(next=move_id).first()
+    if before_task_to_move != None:
+        # The moved task was not the last item in the list
+        before_task_to_move.next = task_to_move.next
         
-    # The task moved to the end of the list
-    if taskToMove.previous == lastTask:
-        lastTask = taskToMove.id
+    # Redirect the item that now will link to the task that is moved
+    task_to_move.next = after_id
+    before_task_after = models.Task.query.filter_by(next=after_id).first()
+    if before_task_after == None:
+        # We moved the task to the end of the list        
+        task_to_move.last = True
+        task_after = models.Task.query.filter_by(id=after_id).first()
+        task_after.last = False
+    else:
+        before_task_after.next = move_id
         
     db.session.commit()
+    print("Commited!")
     return "1", 201

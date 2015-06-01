@@ -44,10 +44,10 @@ var TaskBox = React.createClass({
       });
     });
   },
-  handleUpdateTask: function(id, done) {
+  handleUpdateTask: function(index, id, done) {
 	  var tasks = this.state.data;
-	  tasks[id]["done"] = done;
-	  this.setState({data:tasks}, function() {
+	  tasks[index]["done"] = done;
+	  this.setState({data: tasks}, function() {
 		  $.ajax({
 			  url: this.props.url+"/status/"+id,
 			  dataType: 'json',
@@ -68,9 +68,9 @@ var TaskBox = React.createClass({
 	  console.log("idMoved")
 	  console.log(idMoved)
 	  $.ajax({
-		  url: this.props.url+"/move/"+idMoved,
-		  dataType: 'json',
-		  contentType: 'application/json',
+		  url: this.props.url+"/move/"+idMoved+"/after/"+toId,
+		  //dataType: 'json',
+		  //contentType: 'application/json; charset=utf-8',
 		  type: 'PUT',
 		  data: JSON.stringify({'after': toId}),
 		  success: function() {
@@ -92,7 +92,7 @@ var TaskBox = React.createClass({
     this.loadTasksFromServer();
     setInterval(this.loadTasksFromServer, this.props.pollInterval);
   },
-  render: function() {
+  render: function() {	  
     return (
     		
 	<div className="taskBox panel panel-default">
@@ -103,7 +103,7 @@ var TaskBox = React.createClass({
       <div className="taskForm">
          <TaskForm onNewTaskSubmit={this.handleNewTaskSubmit}/>
      </div>
-	 <div className="taskList">	 
+	 <div className="taskList">	 	 	
         <TaskList data={this.state.data} onTaskUpdate={this.handleUpdateTask} onMove={this.handleMove}/>        
       </div>
         </div>
