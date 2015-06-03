@@ -31,7 +31,7 @@ var TaskList = React.createClass({
         console.log(data[moved].id)
         
         console.log(this.dragged.dataset);
-        this.props.onMove(data[moved].id, data[to].id);
+        this.props.onMove(moved, to, data[moved].id, data[to].id);
         if(from < to) to--;
         data.splice(to, 0, data.splice(from, 1)[0]);
         this.setState({data: data});

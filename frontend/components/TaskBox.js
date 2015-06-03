@@ -1,5 +1,5 @@
 /*
- * Front-end Javascript based on Facebook react.
+ * Front-end Javascript based on Facebook React.
  * Communicates via AJAX REST API calls to back-end server
  * 
  * TaskBox is the main component connecting frontend to backend
@@ -63,27 +63,21 @@ var TaskBox = React.createClass({
 		  });			
 	  	});
   },
-  handleMove: function(idMoved, toId) {
-	  // TODO: Temporary client move
-	  console.log("idMoved")
-	  console.log(idMoved)
-	  $.ajax({
-		  url: this.props.url+"/move/"+idMoved+"/after/"+toId,
-		  //dataType: 'json',
-		  //contentType: 'application/json; charset=utf-8',
-		  type: 'PUT',
-		  data: JSON.stringify({'after': toId}),
-		  success: function() {
-			  console.log("Success, moved")
-		  },
-		  error: function(xhr, status, err) {
-			  console.error(this.props.url, status, err.toString());
-		  }.bind(this)
+  handleMove: function(indexMoved, indexTo, idMoved, idTo) {
+	  var tasks = this.state.data;
+	  tasks.splice(indexTo, 0, tasks.splice(indexMoved, 1)[0])
+	  this.setState({data: tasks}, function() {
+		  $.ajax({
+			  url: this.props.url+"/move/"+idMoved+"/after/"+idTo,
+			  type: 'PUT',
+			  success: function(data) {
+				  this.setState({data: tasks});
+			  }.bind(this),
+			  error: function(xhr, status, err) {
+				  console.error(this.props.url, status, err.toString());
+			  }.bind(this)
+		  });
 	  });
-	  console.log("Move item:");
-	  console.log(idMoved);
-	  console.log("To after element:");
-	  console.log(toId);	  
   },
   getInitialState: function() {
     return {data: []};
@@ -110,8 +104,6 @@ var TaskBox = React.createClass({
     );
   }
 });
-
-
 
 React.render(
   <TaskBox url="todo/api/v1.0/tasks" pollInterval={2000} />,
