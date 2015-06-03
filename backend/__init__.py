@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from flask import Flask, Response, request, jsonify, abort, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
 
@@ -68,25 +69,38 @@ def update_task(task_id):
     return "1", 201
 
 @app.route('/todo/api/v1.0/tasks/move/<int:move_id>/after/<int:after_id>', methods=['PUT'])
-def move_task(move_id, after_id):            
+def move_task(move_id, after_id):       
+    tasksUnsorted = models.Task.query.all()
+    print("Move %i to %i", move_id, after_id)  
+    for task in tasksUnsorted:
+        print(task.json())   
+                  
     # Redirect item that previously linked to the task that is moved
-    task_to_move = models.Task.query.get(move_id)
-    before_task_to_move = models.Task.query.filter_by(next=move_id).first()
-    if before_task_to_move != None:
-        # The moved task was not the last item in the list
-        before_task_to_move.next = task_to_move.next
+    task_to_move = models.Task.query.get(move_id)            
+    if task_to_move.first:
+        # The moved task was the first in the list
+        task_to_move.first = False
+        new_last_task = models.Task.query.get(task_to_move.next)
+        new_last_task.first = True
+    else:
+        # The moved task was not the first item in the list
+        previous_linked_to_task_to_move = models.Task.query.filter_by(next=task_to_move.id).first()
+        previous_linked_to_task_to_move.next = task_to_move.next    
         
     # Redirect the item that now will link to the task that is moved
-    task_to_move.next = after_id
-    before_task_after = models.Task.query.filter_by(next=after_id).first()
-    if before_task_after == None:
-        # We moved the task to the end of the list        
-        task_to_move.last = True
-        task_after = models.Task.query.filter_by(id=after_id).first()
-        task_after.last = False
+    if after_id == None:
+        # We move the task to the end of the list
+        new_linked_to_task_to_move = models.Task.query.filter_by(next=None).first()
+        new_linked_to_task_to_move.next = move_id
+        task_to_move.next = None
     else:
-        before_task_after.next = move_id
-        
+        new_linked_to_task_to_move = models.Task.query.get(after_id)
+        task_to_move.next = new_linked_to_task_to_move.next
+        new_linked_to_task_to_move.next = move_id
+                
     db.session.commit()
+    #tasksUnsorted = models.Task.query.all()  
+    for task in tasksUnsorted:
+        print(task.json())       
     print("Commited!")
     return "1", 201
