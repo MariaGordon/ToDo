@@ -51,7 +51,7 @@ var TaskList = React.createClass({
 	}.bind(this));
 		
     return (
-      <ul onDragOver={this.dragOver}>
+      <ul className="taskList list-group" onDragOver={this.dragOver}>
         {taskNodes}
       </ul>
     );

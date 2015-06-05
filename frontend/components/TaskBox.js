@@ -118,7 +118,7 @@ var TaskBox = React.createClass({
   render: function() {	  
     return (
     		
-	<div className="taskBox panel panel-default">
+	<div className="taskBox">
       <div className="title text-center">
          <h3><strong>Todos</strong></h3>
       </div>

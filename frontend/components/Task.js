@@ -6,13 +6,16 @@ var Task = React.createClass({
     
     render: function() {            	
     return (
-	  <div className="task">
-	      <div className="checkbox">
-	          <label>
-	          	<input type="checkbox" checked={this.props.value["done"]} onChange={this.handleChange}> {this.props.value["description"]}</input>               
-	          </label>
-	          <span className="ui-icon ui-icon-arrowthick-2-n-s"></span>
-	      </div>
+	  <div className="task">	      
+	      <label>
+	      	<input 
+	      	  type="checkbox" 
+	      	  checked={this.props.value["done"]} 
+	      	  onChange={this.handleChange} />
+	      	<div className={this.props.value["done"]?"checked":"unchecked"}> 
+	      	  {this.props.value["description"]}
+	      	</div>               
+	      </label>	          	     
       </div>       
     );
   }

@@ -1,156 +1,141 @@
 
 body {
-    background-color: rgb(246, 245, 245);
-    font-family: "lucida grande", "sans-serif";
+  background-color: rgb(245, 245, 245);
+  font-family: "lucida grande", "sans-serif";
 }
 
-form {
-    margin: 0;
-    padding: 0;
-}
-
-.completed label{
-    text-decoration: line-through;
-    color: rgb(203, 203, 203);
-}
-
-.app {
-    margin: 0 auto;
-    width: 500px;
+#content {
+  width: 550px;
+  min-height: 600px;
+  margin: 0px auto;
+  padding-bottom: 100px;
+  background: rgb(256, 256, 256);
+  border-radius: 10px;
+  position: relative;
+  border-style: solid;
+  border-color: rgb(200, 200, 200);
+  border-width: 1px;
 }
 
 .taskBox {
-    margin-top:50px;
+  margin-top: 50 px;
 }
 
 .taskBox .title {
-    padding: 25px 0px 25px 0px;
-    border-width: 0 0 1px 0;
-    border-style: dashed;
-    border-color: rgb(228, 228, 228);
+  padding: 25px 0px 25px 0px;
+  text-align: center;
+  font-size: 26px;
+  border-width: 0 0 1px 0;
+  border-style: dashed;
+  border-color: rgb(228, 228, 228);    
 }
 
 .taskBox .taskForm {
-    padding: 10px 30px 0px 5px;
-}
-
-.taskBox .taskBoxBar {
-    color: rgb(203, 203, 203);
-    padding: 20px;
-
-    border-width: 1px 0 0 0;
-    border-style: dashed;
-    border-color: rgb(228, 228, 228);
+    padding: 20px 30px 0px 5px;
 }
 
 .taskBox input {
+  margin-left: 10px;
   height: 40px;
   box-sizing: border-box;
   border-radius: 5px;
-  border: solid 1px #b9b8b8;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(168, 168, 168);    
 }
 
 .taskBox input[type=text] {
-  padding: 15px;
-  width: 66%;
-  margin-right: 3%;
-  box-shadow: inset 0px 3px 12px -2px rgba(0,0,0,0.1);
+  padding: 5px;
+  width: 60%;
+  margin-right: 5%;
 }
 
 .taskBox input[type=submit] {
-  width: 30%;
+  width: 25%;
+  margin-left: 5%;
   font-weight: bold;
   background: rgba(232,232,232,1);
-  background: linear-gradient(to bottom, rgba(232,232,232,1) 0%, rgba(232,232,232,1) 46%, rgba(215,215,215,1) 54%, rgba(215,215,215,1) 100%);
+  background: linear-gradient(to bottom, rgba(230,230,230,1) 0%, rgba(232,232,232,1) 46%, rgba(215,215,215,1) 54%, rgba(215,215,215,1) 100%);
 }
 
-.taskBox aside {
-    float: right;
+.taskList {
+  padding: 20px 0px 0px 0px;
+  box-sizing: border-box;
+  height: 50px;
+  cursor: default;
+  font-weight: 500;
 }
 
 .taskList li {
-    color: rgb(122, 123, 124);
-    border-width: 0;
-}
-.taskList li:hover .ui-icon {
-    visibility: visible;
-}
-
-.taskList .ui-icon {
-    float: right;
-    visibility: hidden;
-}
-
-.taskList .taskLabel {
-    border-width: 0;
-    padding-left: 7px;
-    font-weight: 500;
+  padding: 10px;
+  color: rgb(100, 100, 100);
 }
 
 .taskList li:nth-child(odd) {
-    background-color: rgb(244, 247, 250);
+  background-color: rgb(244, 247, 250);
 }
 
-li.placeholder {background: rgb(255,240,120);}
-li.placeholder:before {
-  content: "Drop here";
-  color: rgb(225,210,90);
-}
-
-.taskFooter {
-  font-size: 13px;
-  text-align: right;
-}
-
-.taskFooter .markAll {
-  color: #448ccb;
-  cursor: pointer;
-}
-
-body {
-  margin: 40px;
-  width: 620px;
-  font-family: arial;
-  font-size: 15px;
-}
-ul {
+.taskList ul {
   list-style: none;
   margin:0;
   padding:0;
   float:left;
-  width:200px;
-  background:#ddd;
+  width:550px;
 }
-li {
-  padding: 10px;
-  color: #666;
-  line-height: 17px;
-}
-li.dragging {
+
+.taskList li.dragging {
   background: #eee;
 }
-#app > ul {
-  float: left;
+
+.taskList li.placeholder {
+  background: rgb(255,240,120);
 }
-#grid div {
-  height: 111px;
-  width: 130px;
-  float: left;
-  color: #fff;
+
+.taskList li.placeholder:before {
+  color: rgb(225,210,90);
+}
+
+.task {
+  box-sizing: border-box;
+  height: 50px;
+  padding-left: 20px;
+  cursor: default;
+}
+
+.task div {
+  height: 100%;
+  padding-left: 10px;
+  display: inline-block;
+  vertical-align: middle;
   position: relative;
+  top: -3px;
 }
-#grid div span {
-  font-size: 10px;
+
+.checked {
+  color: rgb(180, 180, 180);
+  text-decoration: line-through;
+}
+
+.taskFooter {
+  width: 550px;
+  height: 50px;
+  line-height: 50px;
+  bottom: 0;
   position: absolute;
-  left: 50%;
-  top: 50%;
-  text-shadow: 0px 0px 2px rgba(0,0,0,0.5);
-}
-#grid div.dragging {
-  box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
-  z-index: 1;
+  border-top: dotted 1px rgb(168, 168, 168);
+  font-size: 13px;
 }
 
+.taskFooter .markAll {
+  padding-right: 10px;
+  color: rgb(00,100,256);
+  cursor: pointer;
+  float: right;
+}
 
-
+.taskFooter .counter {
+  padding-left: 10px;
+  float: left;
+  color: rgb(100, 100, 100);
+}
 
