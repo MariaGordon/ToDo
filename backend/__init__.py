@@ -12,9 +12,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'to
 db = SQLAlchemy(app)
 
 from backend import models
-    
-
-    
+        
 @app.route('/todo/api/v1.0/tasks', methods=['GET'])
 def get_tasks():        
     tasks_unsorted = models.Task.query.all()    
@@ -55,7 +53,7 @@ def create_task():
         last_task.next = task.id        
         db.session.commit()
     
-    return "1", 201
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
     
 @app.route('/todo/api/v1.0/tasks/status', methods=['POST'])
 def update_task():      
@@ -65,7 +63,7 @@ def update_task():
     task = models.Task.query.get(request.json['id'])
     task.done = request.json['done']
     db.session.commit()
-    return "1", 201
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
 @app.route('/todo/api/v1.0/tasks/move', methods=['POST'])
 def move_task():
@@ -100,7 +98,7 @@ def move_task():
         new_linked_to_movetask.next = moveid
                 
     db.session.commit()
-    return "1", 201
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
 
 @app.route('/todo/api/v1.0/tasks/complete', methods=['POST'])
@@ -110,4 +108,4 @@ def all_tasks_completed():
         task.done = True
         
     db.session.commit()
-    return "1", 201
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 

@@ -30,8 +30,7 @@ var TaskBox = React.createClass({
   },
   
   handleNewTaskSubmit: function(description) {
-    var tasks = this.state.data;
-    console.log(description)
+    var tasks = this.state.data;    
     tasks.push({"id": "temporary",
     			"description": description,
     			"done": false});
@@ -75,8 +74,7 @@ var TaskBox = React.createClass({
   
   handleMove: function(indexMoved, indexTo, idMoved, idTo) {
 	  var tasks = this.state.data;
-	  tasks.splice(indexTo, 0, tasks.splice(indexMoved, 1)[0]);
-	  console.log("move")
+	  tasks.splice(indexTo, 0, tasks.splice(indexMoved, 1)[0]);	  
 	  this.setState({data: tasks}, function() {
 		  $.ajax({
 			  url: this.props.url+"/move",
@@ -105,12 +103,10 @@ var TaskBox = React.createClass({
 		  $.ajax({
 			  url: this.props.url+"/complete",			  
               type: 'POST',
-			  success: function(data) {
-				  console.log("success");
+			  success: function(data) {				  
 				  this.setState({data: tasks});
 			  }.bind(this),
-			  error: function(xhr, status, err) {
-				  console.log("failed");
+			  error: function(xhr, status, err) {				  
 				  console.error(this.props.url, status, err.toString());
 			  }.bind(this)
 		  });
