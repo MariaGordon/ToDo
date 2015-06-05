@@ -66,8 +66,7 @@ def update_task():
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
 @app.route('/todo/api/v1.0/tasks/move', methods=['POST'])
-def move_task():
-    print("move task")
+def move_task():    
     if not request.json:
         abort(400)
         

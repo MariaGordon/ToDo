@@ -10,7 +10,7 @@ var TaskList = React.createClass({
 		this.props.onTaskUpdate(index, id, done);
     },    
 	  
-    dragStart: function(e) {    	
+    dragStart: function(e) {    
     	this.dragged = e.currentTarget;
     	e.dataTransfer.effectAllowed = 'move';
         // Firefox requires calling dataTransfer.setData
@@ -20,6 +20,11 @@ var TaskList = React.createClass({
     
     dragEnd: function(e) {    	
         this.dragged.style.display = "block";
+       
+        // Workaround
+        while (this.dragged.className != "list-group-item"){
+            this.dragged = this.dragged.parentNode;
+        }       
         this.dragged.parentNode.removeChild(placeholder);
         
         // Tell TaskBox about the move
@@ -30,11 +35,16 @@ var TaskList = React.createClass({
     },
       
     dragOver: function(e) {    	
-        e.preventDefault();
+        e.preventDefault();        
         this.dragged.style.display = "none";
         if(e.target.className == "placeholder") return;
-        this.over = e.target;        
-        e.target.parentNode.insertBefore(placeholder, e.target);
+        // Workaround, sometimes we get children
+        target = e.target;
+        while (target.className != "list-group-item"){
+            target = target.parentNode;
+        }
+        this.over = target;      
+        target.parentNode.insertBefore(placeholder, target);        
     },
     
     render: function() {        	
