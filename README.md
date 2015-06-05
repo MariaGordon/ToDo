@@ -9,6 +9,8 @@ Inspired by the excellent Mega-tutorial on Flask by Miguel Grinberg.
 Using Facebook React and AJAX calls. Communicates with a JSON-based REST API to backend.
 Inspired by the Facebook React tutorial on building comments box.
 
+Inspired by Daniel Stocks on drag of items. 
+
 ## Requirements
 * Python3 (not tested with python2 but should work)
 * Flask
@@ -18,4 +20,4 @@ Inspired by the Facebook React tutorial on building comments box.
 ```
 
 ## Outstanding items
-Drag is bugging a lot on the front-end
+Drag is bugging a lot on the front-end. The drag sometimes get holds of children of the actual node I wish to drag, would like to solve this in a nice way and not have to loop up to the correct parent. 
