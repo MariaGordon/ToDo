@@ -21,10 +21,11 @@ body {
   margin-top: 50 px;
 }
 
-.taskBox .title {
+.taskBox h1 {
   padding: 25px 0px 25px 0px;
   text-align: center;
   font-size: 26px;
+  font-weight: bold;
   border-width: 0 0 1px 0;
   border-style: dashed;
   border-color: rgb(228, 228, 228);    

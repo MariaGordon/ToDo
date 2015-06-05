@@ -36,7 +36,7 @@ def get_tasks():
     return  jsonify({"result" : tasksSorted}) 
 
 # TODO this should be a PUT request
-@app.route('/todo/api/v1.0/tasks/create', methods=['PUT'])
+@app.route('/todo/api/v1.0/tasks/create', methods=['POST'])
 def create_task():         
     if not request.json or not 'description' in request.json:
         abort(400)    
@@ -55,29 +55,24 @@ def create_task():
     
     return "1", 201
     
-@app.route('/todo/api/v1.0/tasks/status/<int:task_id>', methods=['PUT'])
-def update_task(task_id):      
+@app.route('/todo/api/v1.0/tasks/status', methods=['POST'])
+def update_task():      
     if not request.json:
-        abort(400)    
-    if not 'done' in request.json:
         abort(400)
     
-    task = models.Task.query.get(task_id)
+    task = models.Task.query.get(request.json['id'])
     task.done = request.json['done']
     db.session.commit()
     return "1", 201
 
-@app.route('/todo/api/v1.0/tasks/complete', methods=['PUT'])
-def all_tasks_completed():                  
-    tasks = models.Task.query.filter_by(done=False)
-    for task in tasks:
-        task.done = True
+@app.route('/todo/api/v1.0/tasks/move', methods=['POST'])
+def move_task():
+    if not request.json:
+        abort(400)
         
-    db.session.commit()
-    return "1", 201
-
-@app.route('/todo/api/v1.0/tasks/move/<int:moveid>/after/<int:afterid>', methods=['PUT'])
-def move_task(moveid, afterid):           
+    moveid = request.json['moveid']
+    afterid = request.json['afterid']
+               
     # Redirect item that previously linked to the task that is moved
     movetask = models.Task.query.get(moveid)            
     if movetask.first:
@@ -101,5 +96,15 @@ def move_task(moveid, afterid):
         movetask.next = new_linked_to_movetask.next
         new_linked_to_movetask.next = moveid
                 
+    db.session.commit()
+    return "1", 201
+
+
+@app.route('/todo/api/v1.0/tasks/complete', methods=['POST'])
+def all_tasks_completed():                  
+    tasks = models.Task.query.filter_by(done=False)
+    for task in tasks:
+        task.done = True
+        
     db.session.commit()
     return "1", 201

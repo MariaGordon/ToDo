@@ -6,11 +6,16 @@
  * TaskForm enable new task creation. 
  * TaskList component holds the complete todo-list.
  *   Task exposes one task item
+ * TaskFooter displays items left and enable marking all items
  *    
  * Inspired by the Facebook React tutorial building comments box.
  */
 
 var TaskBox = React.createClass({
+  getInitialState: function() {
+    return {data: []};
+  },
+    
   loadTasksFromServer: function() {
     $.ajax({
       url: this.props.url,
@@ -35,7 +40,7 @@ var TaskBox = React.createClass({
         url: this.props.url+"/create",
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
-        type: 'PUT',
+        type: 'POST',
         data: JSON.stringify({"description": description}),
         success: function(data) {
           this.setState({data: tasks});
@@ -52,11 +57,12 @@ var TaskBox = React.createClass({
 	  tasks[index]["done"] = done;
 	  this.setState({data: tasks}, function() {
 		  $.ajax({
-			  url: this.props.url+"/status/"+id,
+			  url: this.props.url+"/status",
 			  dataType: 'json',
 			  contentType: 'application/json; charset=utf-8',
-			  type: 'PUT',
-			  data: JSON.stringify({'done': done}),
+			  type: 'POST',
+			  data: JSON.stringify({'id': id,
+				                    'done': done}),
 			  success: function(data) {
 				  this.setState({data: tasks});
 			  }.bind(this),
@@ -72,8 +78,12 @@ var TaskBox = React.createClass({
 	  tasks.splice(indexTo, 0, tasks.splice(indexMoved, 1)[0]);
 	  this.setState({data: tasks}, function() {
 		  $.ajax({
-			  url: this.props.url+"/move/"+idMoved+"/after/"+idTo,
-			  type: 'PUT',
+			  url: this.props.url+"/move",
+			  dataType: 'json',
+              contentType: 'application/json; charset=utf-8',
+			  type: 'POST',
+			  data: JSON.stringify({'moveid': idMoved,
+                                    'afterid': idTo}),
 			  success: function(data) {
 				  this.setState({data: tasks});
 			  }.bind(this),
@@ -83,16 +93,7 @@ var TaskBox = React.createClass({
 		  });
 	  });
   },
-  
-  getInitialState: function() {
-    return {data: []};
-  },
-  
-  componentDidMount: function() {
-    this.loadTasksFromServer();
-    setInterval(this.loadTasksFromServer, this.props.pollInterval);
-  },
-  
+    
   handleMarkAll: function() {	
 	  var tasks = this.state.data;
 	  tasks.forEach(function (task) {
@@ -101,8 +102,8 @@ var TaskBox = React.createClass({
 	  });	  	  	  	  
 	  this.setState({data: tasks}, function() {
 		  $.ajax({
-			  url: this.props.url+"/complete",
-			  type: 'PUT',
+			  url: this.props.url+"/complete",			  
+              type: 'POST',
 			  success: function(data) {
 				  console.log("success");
 				  this.setState({data: tasks});
@@ -115,25 +116,25 @@ var TaskBox = React.createClass({
 	  });
   },
   
+  componentDidMount: function() {
+    this.loadTasksFromServer();
+    setInterval(this.loadTasksFromServer, this.props.pollInterval);
+  },
+  
   render: function() {	  
-    return (
-    		
-	<div className="taskBox">
-      <div className="title text-center">
-         <h3><strong>Todos</strong></h3>
-      </div>
-
-      <div className="taskForm">
-         <TaskForm onNewTaskSubmit={this.handleNewTaskSubmit}/>
-     </div>
-	 <div className="taskList">	 	 	
-        <TaskList data={this.state.data} onTaskUpdate={this.handleUpdateTask} onMove={this.handleMove}/>        
-      </div>
-     <div className="taskFooter">
-       <TaskFooter data={this.state.data} onMarkAll={this.handleMarkAll}/>             
-     </div>
-    </div>
-       
+    return (    		
+		<div className="taskBox">      
+	      <h1>Todos</h1>      
+	      <div className="taskForm">
+	         <TaskForm onNewTaskSubmit={this.handleNewTaskSubmit}/>
+	     </div>
+		 <div className="taskList">	 	 	
+	        <TaskList data={this.state.data} onTaskUpdate={this.handleUpdateTask} onMove={this.handleMove}/>        
+	      </div>
+	     <div className="taskFooter">
+	       <TaskFooter data={this.state.data} onMarkAll={this.handleMarkAll}/>             
+	     </div>
+	    </div>     
     );
   }  
 });
