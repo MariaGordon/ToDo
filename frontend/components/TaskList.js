@@ -25,7 +25,7 @@ var TaskList = React.createClass({
         // Tell TaskBox about the move
         var data = this.props.data;        
         var moved = Number(this.dragged.dataset.id);        
-        var to = Number(this.over.dataset.id);              
+        var to = Number(this.over.dataset.id);       
         this.props.onMove(moved, to, data[moved].id, data[to].id);        
     },
       
@@ -45,7 +45,10 @@ var TaskList = React.createClass({
 					draggable="true"
 					onDragEnd={this.dragEnd}
 		  			onDragStart={this.dragStart}>
-					<Task value={task} index={i} onUpdateTask={this.handleUpdate}/>
+					<Task 
+					    value={task} 
+					    index={i} 
+					    onUpdateTask={this.handleUpdate}/>
 				</li>
 			);
 	}.bind(this));

@@ -76,6 +76,7 @@ var TaskBox = React.createClass({
   handleMove: function(indexMoved, indexTo, idMoved, idTo) {
 	  var tasks = this.state.data;
 	  tasks.splice(indexTo, 0, tasks.splice(indexMoved, 1)[0]);
+	  console.log("move")
 	  this.setState({data: tasks}, function() {
 		  $.ajax({
 			  url: this.props.url+"/move",

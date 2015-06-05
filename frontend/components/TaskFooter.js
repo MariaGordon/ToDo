@@ -4,8 +4,8 @@ var TaskFooter = React.createClass({
     },    
     
     itemsNotDone: function () {    	
-    	return this.props.data.filter(function (task){    		
-    		return task["done"] === false;
+        return this.props.data.filter(function (task){    		
+            return task["done"] === false;
     	})        
     },
     

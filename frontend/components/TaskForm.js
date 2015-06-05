@@ -8,14 +8,13 @@ var TaskForm = React.createClass({
     this.props.onNewTaskSubmit(description);
     React.findDOMNode(this.refs.description).value = '';    
   },
+  
   render: function() {
     return (
-    
-    <form className="taskForm" onSubmit={this.handleSubmit}>
-    <input type="text" placeholder="What needs to be done?" ref="description" />        
-    <input type="submit" value="Add Todo" />
- 
-      </form>
+        <form className="taskForm" onSubmit={this.handleSubmit}>
+            <input type="text" placeholder="What needs to be done?" ref="description" />        
+            <input type="submit" value="Add Todo" />
+        </form>
     );
   }
 });

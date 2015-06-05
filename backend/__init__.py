@@ -13,27 +13,29 @@ db = SQLAlchemy(app)
 
 from backend import models
     
+
+    
 @app.route('/todo/api/v1.0/tasks', methods=['GET'])
 def get_tasks():        
-    tasksUnsorted = models.Task.query.all()    
+    tasks_unsorted = models.Task.query.all()    
     # Now sort the data
     # Place the unsorted list in a dictionary
-    tasksDictionary = {}
-    for task in tasksUnsorted:
-        tasksDictionary[task.id] = task
+    tasks_dictionary = {}
+    for task in tasks_unsorted:
+        tasks_dictionary[task.id] = task
         
-    tasksSorted = []
-    firstTask = models.Task.query.filter_by(first=True).first()
-    nextTaskID = None
-    if firstTask != None:
-        nextTaskID = firstTask.id
+    tasks_sorted = []
+    first_task = models.Task.query.filter_by(first=True).first()
+    next_task_id = None
+    if first_task != None:
+        next_task_id = first_task.id
             
-    while nextTaskID != None:
-        nextTask = tasksDictionary[nextTaskID]
-        tasksSorted.append(nextTask.json())
-        nextTaskID = nextTask.next        
+    while next_task_id != None:
+        next_task = tasks_dictionary[next_task_id]
+        tasks_sorted.append(next_task.json())
+        next_task_id = next_task.next        
                               
-    return  jsonify({"result" : tasksSorted}) 
+    return  jsonify({"result" : tasks_sorted}) 
 
 # TODO this should be a PUT request
 @app.route('/todo/api/v1.0/tasks/create', methods=['POST'])
@@ -41,16 +43,16 @@ def create_task():
     if not request.json or not 'description' in request.json:
         abort(400)    
     
-    lastTask = models.Task.query.filter_by(next=None).first()            
+    last_task = models.Task.query.filter_by(next=None).first()            
     task = models.Task(description=request.json['description'],
-                       first = lastTask==None)    
+                       first = last_task==None)    
         
     db.session.add(task)
     db.session.commit()
     
-    if lastTask != None:    
+    if last_task != None:    
         task = models.Task.query.filter_by(description=request.json['description']).first()
-        lastTask.next = task.id        
+        last_task.next = task.id        
         db.session.commit()
     
     return "1", 201
@@ -67,6 +69,7 @@ def update_task():
 
 @app.route('/todo/api/v1.0/tasks/move', methods=['POST'])
 def move_task():
+    print("move task")
     if not request.json:
         abort(400)
         
