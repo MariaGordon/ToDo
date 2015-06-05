@@ -21,8 +21,6 @@ class Task(db.Model):
         JSON representation of Task
         '''        
         return {'id': self.id,
-                'description': self.description,
-                'next': self.next,
-                'first': self.first,
+                'description': self.description,                
                 'done': self.done}
     

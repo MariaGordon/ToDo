@@ -32,8 +32,7 @@ def get_tasks():
         nextTask = tasksDictionary[nextTaskID]
         tasksSorted.append(nextTask.json())
         nextTaskID = nextTask.next        
-                    
-    print(tasksSorted)      
+                              
     return  jsonify({"result" : tasksSorted}) 
 
 # TODO this should be a PUT request
@@ -65,6 +64,15 @@ def update_task(task_id):
     
     task = models.Task.query.get(task_id)
     task.done = request.json['done']
+    db.session.commit()
+    return "1", 201
+
+@app.route('/todo/api/v1.0/tasks/complete', methods=['PUT'])
+def all_tasks_completed():                  
+    tasks = models.Task.query.filter_by(done=False)
+    for task in tasks:
+        task.done = True
+        
     db.session.commit()
     return "1", 201
 

@@ -10,7 +10,6 @@
  * Inspired by the Facebook React tutorial building comments box.
  */
 
-
 var TaskBox = React.createClass({
   loadTasksFromServer: function() {
     $.ajax({
@@ -24,10 +23,13 @@ var TaskBox = React.createClass({
       }.bind(this)
     });
   },
+  
   handleNewTaskSubmit: function(description) {
     var tasks = this.state.data;
     console.log(description)
-    tasks["temporary"] = {"description" : description, "done" : false};    
+    tasks.push({"id": "temporary",
+    			"description": description,
+    			"done": false});
     this.setState({data: tasks}, function() {
       $.ajax({
         url: this.props.url+"/create",
@@ -44,6 +46,7 @@ var TaskBox = React.createClass({
       });
     });
   },
+  
   handleUpdateTask: function(index, id, done) {
 	  var tasks = this.state.data;
 	  tasks[index]["done"] = done;
@@ -63,9 +66,10 @@ var TaskBox = React.createClass({
 		  });			
 	  	});
   },
+  
   handleMove: function(indexMoved, indexTo, idMoved, idTo) {
 	  var tasks = this.state.data;
-	  tasks.splice(indexTo, 0, tasks.splice(indexMoved, 1)[0])
+	  tasks.splice(indexTo, 0, tasks.splice(indexMoved, 1)[0]);
 	  this.setState({data: tasks}, function() {
 		  $.ajax({
 			  url: this.props.url+"/move/"+idMoved+"/after/"+idTo,
@@ -79,13 +83,38 @@ var TaskBox = React.createClass({
 		  });
 	  });
   },
+  
   getInitialState: function() {
     return {data: []};
   },
+  
   componentDidMount: function() {
     this.loadTasksFromServer();
     setInterval(this.loadTasksFromServer, this.props.pollInterval);
   },
+  
+  handleMarkAll: function() {	
+	  var tasks = this.state.data;
+	  tasks.forEach(function (task) {
+		  task["done"] = true;
+		  return task;
+	  });	  	  	  	  
+	  this.setState({data: tasks}, function() {
+		  $.ajax({
+			  url: this.props.url+"/complete",
+			  type: 'PUT',
+			  success: function(data) {
+				  console.log("success");
+				  this.setState({data: tasks});
+			  }.bind(this),
+			  error: function(xhr, status, err) {
+				  console.log("failed");
+				  console.error(this.props.url, status, err.toString());
+			  }.bind(this)
+		  });
+	  });
+  },
+  
   render: function() {	  
     return (
     		
@@ -100,9 +129,13 @@ var TaskBox = React.createClass({
 	 <div className="taskList">	 	 	
         <TaskList data={this.state.data} onTaskUpdate={this.handleUpdateTask} onMove={this.handleMove}/>        
       </div>
-        </div>
+     <div className="taskFooter">
+       <TaskFooter data={this.state.data} onMarkAll={this.handleMarkAll}/>             
+     </div>
+    </div>
+       
     );
-  }
+  }  
 });
 
 React.render(
