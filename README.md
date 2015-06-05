@@ -10,7 +10,7 @@ Using Facebook React and AJAX calls. Communicates with a JSON-based REST API to 
 Inspired by the Facebook React tutorial on building comments box.
 
 ## Requirements
-* Python3 (not tested with python2 but might work)
+* Python3 (not tested with python2 but should work)
 * Flask
 ```
   pip install flask
@@ -18,9 +18,4 @@ Inspired by the Facebook React tutorial on building comments box.
 ```
 
 ## Outstanding items
-Frontend and Backend:
-* Update all items on TODO-list
-
-Frontend:
-* Strike-through a completed item
-* Use the Twitter Bootstrap (ReactBootstrap) to hot up the looks of the Web page.
+Drag is bugging a lot on the front-end
